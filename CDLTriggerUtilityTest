@@ -1,0 +1,40 @@
+//Error	Error: Compile Error: Variable does not exist: recordTypeID at line 10 column 5	:(
+
+
+@    istest
+
+public class CDLTriggerUtilityTest {
+
+    @IsTest static void testSameShareType() {
+    //What if the record is already updated with Share Type I?
+    //To test, create an Account then create a Contract then attach document with Share Type I
+    
+    Account createAccount = new Account();
+    recordTypeID = '012300000009Sp9AAE';
+    Name = 'Test Account';
+    Type = Nonprofit;
+    insert createAccount;
+    
+    Contract createContract = new Contract();
+    recordTypeID = '012300000000ARuAAM';
+    Name = 'Test Contract';
+    AccountId = createAccount.Id; 
+    Operations__c = '005a000000CIELY';
+    insert createContract;
+    
+    ContentDocumentLink createCDL = new ContentDocumentLink();
+    ShareType = 'I';
+    insert createCDL;
+    
+    
+    
+    
+    //What if the record has a different Share Type than I? Try V Share Type.
+    //To test, create Contract then try V Share Type 
+    
+    
+    //What if the Content Document Link record does not have a related object? Will this cause an error?
+   
+//
+}
+}
