@@ -5,6 +5,7 @@ public class CDLTriggerUtilityTest {
     @IsTest static void testIShareType() {
     //What if the record is already updated with Share Type I?
     //To test, create an Account then create a Contract then attach document with Share Type I
+
       
     Account createNewAccountA = new Account();
     createNewAccountA.RecordTypeId = '012300000009Sp9AAE';  
@@ -20,13 +21,14 @@ public class CDLTriggerUtilityTest {
     insert createNewContractA;
     
     ContentDocumentLink createNewCDLA = new ContentDocumentLink();
-    createNewCDLA.LinkedEntityID = createNewContractA.Id;    
-    createNewCDLA.ShareType = 'I';
-    insert createNewCDLA;
-    
+        createNewCDLA.LinkedEntityID = createNewContractA.Id;    
+        createNewCDLA.ShareType = 'I';
+        createNewCDLA.ContentDocumentId = new ContentDocumentLink;
+        insert createNewCDLA;
+        
         //Retrieve test record
-    List<ContentDocumentLink> allCDLA =[SELECT ContentDocumentId,Id,LinkedEntityId,ShareType FROM ContentDocumentLink WHERE Id =:createNewContractA.Id];
-	System.debug('CDLA' + createNewCDLA.ShareType);
+        List<ContentDocumentLink> allCDLA =[SELECT Id,ContentDocumentId,LinkedEntityId,ShareType FROM ContentDocumentLink WHERE Id =:createNewContractA.Id];
+        System.debug('CDLA' + createNewCDLA.ShareType);
         
         // Verify the share type is I
         System.assertEquals('I',createNewCDLA.ShareType);
@@ -34,67 +36,64 @@ public class CDLTriggerUtilityTest {
     //What if the record has a different Share Type than I? Try V Share Type.
     //To test, create Account, Contract then try V Share Type 
     @IsTest static void testVShareType(){
-     Account createNewAccountB = new Account();
-    createNewAccountB.RecordTypeId = '012300000009Sp9AAE';  
-    createNewAccountB.Name = 'Test Account B';
-    createNewAccountB.Type = 'Nonprofit';
-    insert createNewAccountB;
-    
-    Contract createNewContractB = new Contract();
-    createNewContractB.recordTypeID = '012300000000ARuAAM';
-    createNewContractB.Name = 'Test Contract B';
-    createNewContractB.AccountId = createNewAccountB.Id; 
-   	createNewContractB.Operations__c = '005a000000CIELY';
-    insert createNewContractB;
-    
-    ContentDocumentLink createNewCDLB = new ContentDocumentLink();
-    createNewCDLB.LinkedEntityID = createNewContractB.Id;    
-    createNewCDLB.ShareType = 'V';
-    insert createNewCDLB;
-    
-    List<ContentDocumentLink> allCDLB =[SELECT ContentDocumentId,Id,LinkedEntityId,ShareType FROM ContentDocumentLink WHERE Id =:createNewContractB.Id];
-	System.debug('CDLB' + createNewCDLB.ShareType);
-   
+        Account createNewAccountB = new Account();
+        createNewAccountB.RecordTypeId = '012300000009Sp9AAE';  
+        createNewAccountB.Name = 'Test Account B';
+        createNewAccountB.Type = 'Nonprofit';
+        insert createNewAccountB;
+        
+        Contract createNewContractB = new Contract();
+        createNewContractB.recordTypeID = '012300000000ARuAAM';
+        createNewContractB.Name = 'Test Contract B';
+        createNewContractB.AccountId = createNewAccountB.Id; 
+        createNewContractB.Operations__c = '005a000000CIELY';
+        insert createNewContractB;
+        
+        ContentDocumentLink createNewCDLB = new ContentDocumentLink();
+        createNewCDLB.LinkedEntityID = createNewContractB.Id;    
+        createNewCDLB.ShareType = 'V';
+        insert createNewCDLB;
+        
+        List<ContentDocumentLink> allCDLB =[SELECT ContentDocumentId,Id,LinkedEntityId,ShareType FROM ContentDocumentLink WHERE Id =:createNewContractB.Id];
+        System.debug('CDLB' + createNewCDLB.ShareType);
+        
         //Verify the share type was updated from V to I
         System.assertEquals('I',createNewCDLB.ShareType);  
-      }       
+    }       
     //What if the Content Document Link record does not have a related object? Will this cause an error?
     @IsTest static void testNoLinkedEntity(){
- 	ContentDocumentLink createNewCDLC = new ContentDocumentLink();  
-    createNewCDLC.ShareType = 'I';
-    insert createNewCDLC;
-    System.debug('CDLC' + createNewCDLC.ShareType);
-    }   
+        ContentDocumentLink createNewCDLC = new ContentDocumentLink();  
+        createNewCDLC.ShareType = 'I';
+        insert createNewCDLC;
+        System.debug('CDLC' + createNewCDLC.ShareType);
+    } 
+    //What if several records are inserted and with a different Share Type than I, will that cause issues?
+    @IsTest static void testBulkCDL(){
+        Account createNewAccountD = new Account();
+        createNewAccountD.RecordTypeId = '012300000009Sp9AAE';  
+        createNewAccountD.Name = 'Test Account D';
+        createNewAccountD.Type = 'Nonprofit';
+        insert createNewAccountD;
         
-    //Bulk Test: insert multiple Content Document Links into various records
-        @Istest static void multipleCDL(){
-    Account createNewAccountD = new Account();
-    createNewAccountD.RecordTypeId = '012300000009Sp9AAE';  
-    createNewAccountD.Name = 'Test Account D';
-    createNewAccountD.Type = 'Nonprofit';
-    insert createNewAccountD;
-    
-    Contract createNewContractD = new Contract();
-    createNewContractD.recordTypeID = '012300000000ARuAAM';
-    createNewContractD.Name = 'Test Contract D';
-    createNewContractD.AccountId = createNewAccountD.Id; 
-   	createNewContractD.Operations__c = '005a000000CIELY';
-    insert createNewContractD;
-    
-    ContentDocumentLink createNewCDLD = new ContentDocumentLink();
-    createNewCDLD.LinkedEntityID = createNewContractD.Id;    
-    createNewCDLD.ShareType = 'I';
-    insert createNewCDLD;
-    
-        //Retrieve test record
-    List<ContentDocumentLink> allCDLA =[SELECT ContentDocumentId,Id,LinkedEntityId,ShareType FROM ContentDocumentLink WHERE Id =:createNewContractA.Id];
-	System.debug('CDLA' + createNewCDLA.ShareType);
-        
-        // Verify the share type is = I
-        System.assertEquals('I',createNewCDLA.ShareType);
-    }
-    }  
+        Contract createNewContractD = new Contract();
+        createNewContractD.recordTypeID = '012300000000ARuAAM';
+        createNewContractD.Name = 'Test Contract D';
+        createNewContractD.AccountId = createNewAccountD.Id; 
+        createNewContractD.Operations__c = '005a000000CIELY';
+        insert createNewContractD;
+        {
+            List<ContentDocumentLink> lstCDL = new List<ContentDocumentLink> ();
+            For(Integer i = 1 ;i <= 200 ; i++);
+            ContentDocumentLink createNewCDLD = new ContentDocumentLink ();
+            createNewCDLD.ShareType = 'V';
+            createNewCDLD.LinkedEntityId = createNewContractD.Id;
+            lstCDL.add(createNewCDLD); 
+            
+            insert lstCDL;
+            
+            List<ContentDocumentLink> lstContentDocumentLink = [select id from ContentDocumentLink WHERE Id =:createNewContractD.Id ];
+            System.assertEquals(lstContentDocumentLink.size() ,200);
+        }
+    }    
+}           
   
-       
-      }           
-    }
