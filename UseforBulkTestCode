@@ -1,0 +1,63 @@
+@isTest
+public class TestOpportunityTeamUpdate {
+
+    static testMethod void testStandardUseropp() 
+	{
+		// Create a new user with the Standard User profile
+		Profile standardProf = [select id from profile where name='Standard User'];
+		User su = new User(alias = 'standt', email='standarduser@testorg.com',
+		emailencodingkey='UTF-8',FirstName='opp', lastname='testing', languagelocalekey='en_US',
+		localesidkey='en_US', profileid = standardProf.Id,
+		timezonesidkey='America/Los_Angeles', username='sample@opptest.com');
+      
+    // Switch current user to Standard User
+		System.runAs(su) {  
+			 Account acct = new Account(Name = 'Test Account');
+			insert acct;
+			opportunity opp=new opportunity (
+				StageName = 'Prospecting',
+				CloseDate = Date.today(),
+				AccountId = acct.Id,
+				Type='Existing Business',
+				Demo_Status__c='No Show',
+				Name = 'Test Opportunity Triggers'
+			   );
+			insert opp;
+			//System.debug('value :'+opp.Team_Name__c);
+			//System.assertEquals(opp.Team_Name__c,'Captain America');
+		}
+	}
+    static testMethod void testStandardUserBulk() 
+	{
+		// Create a new user with the Standard User profile
+		Profile standardProf = [select id from profile where name='Standard User'];
+		User su = new User(alias = 'standt', email='standarduser@testorg.com',
+		emailencodingkey='UTF-8',FirstName='opp', lastname='testing', languagelocalekey='en_US',
+		localesidkey='en_US', profileid = standardProf.Id,
+		timezonesidkey='America/Los_Angeles', username='sample@opptest.com');
+      
+		// Switch current user to Standard User
+		System.runAs(su) 
+		{  
+			Account acct = new Account(Name = 'Test Account');
+			insert acct;
+
+			List<opportunity> lstOpp = new List<opportunity> ();
+			For(Integer i=1 ;i<=200 ; i++)
+			{
+				opportunity opp=new opportunity ();
+					opp.StageName = 'Prospecting';
+					opp.CloseDate = Date.today();
+					opp.AccountId = acct.Id;
+					opp.Type='Existing Business';
+					opp.Demo_Status__c='No Show';
+					opp.Name = 'Test Opportunity Triggers'+i;
+				lstOpp.add(opp);	   
+			}
+			insert lstOpp;
+	
+			List<opportunity> lstOpportunity = [select id from opportunity ];
+			System.assertEquals(lstOpportunity.size() ,200);
+		}
+	}
+}
